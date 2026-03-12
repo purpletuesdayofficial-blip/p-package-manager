@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>p — Package Manager for Arch Linux</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --surface: #16161d;
+      --border: #2a2a38;
+      --accent: #7eb8f7;
+      --accent2: #a78bfa;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --green: #86efac;
+      --red: #f87171;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(15,15,19,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 6rem 3rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.1s forwards;
+    }
+
+    .hero h1 {
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -4px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.35s forwards;
+    }
+
+    .install-box {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      max-width: 700px;
+      width: 100%;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.45s forwards;
+    }
+
+    .install-box .prompt { color: var(--muted); user-select: none; }
+
+    .copy-btn {
+      margin-left: auto;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+    .hero-badges {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.55s forwards;
+    }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .badge.blue   { border-color: var(--accent);  color: var(--accent); }
+    .badge.purple { border-color: var(--accent2); color: var(--accent2); }
+    .badge.green  { border-color: var(--green);   color: var(--green); }
+
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 2.5rem;
+    }
+
+    .docs-table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; }
+
+    .docs-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .docs-table td { padding: 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .docs-table tr:last-child td { border-bottom: none; }
+    .docs-table tr:hover td { background: var(--surface); }
+
+    .flag { color: var(--accent); font-size: 1rem; }
+    .cmd  { color: var(--muted); font-size: 0.82rem; }
+    .desc { color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; }
+
+    .examples-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+
+    .example-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .example-card:hover { border-color: var(--accent); }
+
+    .card-bar {
+      background: var(--border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: var(--red); }
+    .dot.y { background: #fbbf24; }
+    .dot.g { background: var(--green); }
+
+    .card-body {
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.9;
+    }
+
+    .card-body .p       { color: var(--accent2); }
+    .card-body .flag-c  { color: var(--accent); }
+    .card-body .pkg     { color: var(--text); }
+    .card-body .comment { color: var(--muted); }
+
+    .wiki-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+
+    .wiki-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .wiki-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+
+    .wiki-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--accent2);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .wiki-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+    .wiki-card code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-size: 0.79rem;
+      color: var(--accent);
+    }
+
+    .contrib-steps { display: flex; flex-direction: column; gap: 1rem; }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      padding: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      color: var(--border);
+      font-weight: 600;
+      min-width: 2rem;
+      line-height: 1;
+      padding-top: 0.2rem;
+    }
+
+    .step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .step-content p  { color: var(--muted); font-size: 0.9rem; }
+
+    .step-content code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-size: 0.79rem;
+      color: var(--accent);
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1rem; }
+      .hero { padding: 4rem 1.5rem 3rem; }
+      section { padding: 3.5rem 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem; }
+      .install-box { flex-wrap: wrap; font-size: 0.73rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">p</div>
+  <ul class="nav-links">
+    <li><a href="#docs">Docs</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#wiki">Wiki</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">// arch linux · zsh · pacman wrapper</div>
+  <h1><span>p</span><br>package<br>manager.</h1>
+  <p class="hero-sub">A minimal zsh wrapper around <code style="font-family:'JetBrains Mono',monospace;color:var(--accent)">pacman</code> and <code style="font-family:'JetBrains Mono',monospace;color:var(--accent)">yay</code>. One letter. No bloat. No nonsense.</p>
+  <div class="install-box">
+    <span class="prompt">$</span>
+    <span>bash &lt;(curl -s https://raw.githubusercontent.com/purpletuesdayofficial-blip/p-package-manager/main/install.sh)</span>
+    <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
+  </div>
+  <div class="hero-badges">
+    <span class="badge blue">Arch Linux</span>
+    <span class="badge purple">zsh</span>
+    <span class="badge green">GPL v3</span>
+    <span class="badge">AUR support</span>
+    <span class="badge">~30 lines</span>
+  </div>
+</div>
+
+<section id="docs">
+  <div class="section-label">// 01 — documentation</div>
+  <h2>Usage</h2>
+  <table class="docs-table">
+    <thead>
+      <tr><th>Flag</th><th>Description</th><th>Equivalent</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="flag">-i</span></td><td><span class="desc">Install one or more packages</span></td><td><span class="cmd">sudo pacman -S --noconfirm</span></td></tr>
+      <tr><td><span class="flag">-r</span></td><td><span class="desc">Remove one or more packages</span></td><td><span class="cmd">sudo pacman -R</span></td></tr>
+      <tr><td><span class="flag">-u</span></td><td><span class="desc">Full system update</span></td><td><span class="cmd">sudo pacman -Syu</span></td></tr>
+      <tr><td><span class="flag">-s</span></td><td><span class="desc">Search for a package</span></td><td><span class="cmd">pacman -Ss</span></td></tr>
+      <tr><td><span class="flag">-a</span></td><td><span class="desc">Install from the AUR</span></td><td><span class="cmd">yay -S</span></td></tr>
+      <tr><td><span class="flag">-h</span></td><td><span class="desc">Show help</span></td><td><span class="cmd">—</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="examples">
+  <div class="section-label">// 02 — examples</div>
+  <h2>In action</h2>
+  <div class="examples-grid">
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-body">
+        <span class="comment"># install packages</span><br>
+        <span class="p">p</span> <span class="flag-c">-i</span> <span class="pkg">neovim</span><br>
+        <span class="p">p</span> <span class="flag-c">-i</span> <span class="pkg">git curl wget</span>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-body">
+        <span class="comment"># remove a package</span><br>
+        <span class="p">p</span> <span class="flag-c">-r</span> <span class="pkg">firefox</span><br><br>
+        <span class="comment"># full system update</span><br>
+        <span class="p">p</span> <span class="flag-c">-u</span>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-body">
+        <span class="comment"># search repos</span><br>
+        <span class="p">p</span> <span class="flag-c">-s</span> <span class="pkg">htop</span><br><br>
+        <span class="comment"># install from AUR</span><br>
+        <span class="p">p</span> <span class="flag-c">-a</span> <span class="pkg">vesktop</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="wiki">
+  <div class="section-label">// 03 — wiki</div>
+  <h2>Knowledge base</h2>
+  <div class="wiki-grid">
+
+    <div class="wiki-card">
+      <h3>Requirements</h3>
+      <p>Requires <code>zsh</code> as your shell and <code>pacman</code>, which comes standard on all Arch-based distros. The <code>-a</code> flag additionally requires <code>yay</code> for AUR support.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Installing yay</h3>
+      <p>If you don't have yay yet:<br><br>
+      <code>git clone https://aur.archlinux.org/yay.git</code><br>
+      <code>cd yay && makepkg -si</code><br><br>
+      After that, <code>p -a</code> will work as expected.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>How it works</h3>
+      <p><code>p</code> is a plain zsh function injected into your <code>~/.zshrc</code>. No binaries, no PATH changes, no daemons. When you type <code>p -i neovim</code>, zsh matches the flag and runs the corresponding <code>pacman</code> command directly.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Passwordless sudo</h3>
+      <p>The installer drops a sudoers drop-in at <code>/etc/sudoers.d/p-package-manager</code>, granting passwordless <code>pacman</code> access for the current user only. It does not touch <code>/etc/sudoers</code> itself, keeping the change isolated and easy to undo.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Supported distros</h3>
+      <p>Any distro using <code>pacman</code> as its package manager: Arch Linux, Manjaro, EndeavourOS, CachyOS, Garuda, Artix, and others. Will not work on Debian, Fedora, or any non-pacman system.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Installing multiple packages</h3>
+      <p>Pass multiple names separated by spaces:<br><br>
+      <code>p -i git neovim htop fzf</code><br><br>
+      All arguments after the flag are forwarded directly to <code>pacman</code>, so standard multi-install syntax works as-is.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>What -u does</h3>
+      <p>Running <code>p -u</code> executes a full system upgrade via <code>pacman -Syu</code>. Any arguments after <code>-u</code> are ignored — it always upgrades the full system. This is intentional: partial upgrades are unsupported on Arch and can break things.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>The .zshrc it installs</h3>
+      <p>The installer replaces your <code>~/.zshrc</code> with the one from the repo. Your existing file is backed up to <code>~/.zshrc.bak</code> first. The installed config includes history settings, autocompletion, spell correction, and the <code>p()</code> function.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Updating</h3>
+      <p>Re-run the install script at any time. If it detects an existing clone at <code>~/.p-package-manager</code>, it runs <code>git pull</code> instead of re-cloning, then refreshes your <code>~/.zshrc</code> with the latest version.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Uninstalling</h3>
+      <p>Remove the <code>p()</code> function block from <code>~/.zshrc</code> and delete <code>/etc/sudoers.d/p-package-manager</code> if it exists. Optionally remove <code>~/.p-package-manager</code>. Nothing else was modified during install.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Unknown flags</h3>
+      <p>Passing an unrecognised flag prints:<br><br>
+      <code>Unknown option: X. Try 'p -h' for help.</code><br><br>
+      No command is executed and no packages are touched.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Security notes</h3>
+      <p>The installer requires sudo to write the sudoers drop-in. The <code>NOPASSWD</code> rule is scoped strictly to <code>/usr/bin/pacman</code> for your user only — not a blanket sudo bypass. Check <code>/etc/sudoers.d/p-package-manager</code> after install to verify.</p>
+    </div>
+
+  </div>
+</section>
+
+<section id="contributing">
+  <div class="section-label">// 04 — contributing</div>
+  <h2>Get involved</h2>
+  <div class="contrib-steps">
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h3>Fork the repo</h3>
+        <p>Go to GitHub and fork the project to your own account. You'll push your changes there before opening a PR.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h3>Clone and edit</h3>
+        <p><code>git clone https://github.com/YOUR_USERNAME/p-package-manager.git</code> — make your changes to <code>.zshrc</code> or <code>install.sh</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h3>Test locally</h3>
+        <p>Source your modified config with <code>source ~/.zshrc</code> and verify everything works. If you changed the installer, run it in a clean environment if possible.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h3>Open a pull request</h3>
+        <p>Submit your PR with a clear description of what you changed and why. Keep it focused — one change per PR is ideal.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 purpletuesdayofficial-blip — GPL v3</span>
+  <span>github.com/purpletuesdayofficial-blip/p-package-manager</span>
+</footer>
+
+<script>
+  function copyInstall(btn) {
+    const cmd = 'bash <(curl -s https://raw.githubusercontent.com/purpletuesdayofficial-blip/p-package-manager/main/install.sh)';
+    navigator.clipboard.writeText(cmd).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
