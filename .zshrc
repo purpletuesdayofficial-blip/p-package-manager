@@ -10,11 +10,11 @@ SPROMPT='zsh: correct %R to %r? [nyae] '
 # ~/.zshrc
 p() {
     case "$1" in
-        -i) shift; sudo pacman -S "$@";;
-        -r) shift; sudo pacman -R "$@";;
-        -u) shift; sudo pacman -Syu;;
-        -s) shift; pacman -Ss "$@";;
-        -a) shift; yay -S "$@";;
+        -i) shift; sudo pacman --noconfirm -S "$@";;
+        -r) shift; sudo pacman --noconfirm -R "$@";;
+        -u) shift; sudo pacman --noconfirm -Syu;;
+        -s) shift; pacman --noconfirm -Ss "$@";;
+        -a) shift; yay --noconfirm -S "$@";;
         -h)
             cat <<'EOF'
 Usage: p [option] [package-name]
