@@ -38,8 +38,12 @@ fi
 echo "==> Installing new .zshrc..."
 cp "$REPO_DIR/.zshrc" "$ZSHRC"
 
+echo "==> Modifying permissions..."
+echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman" | sudo tee /etc/sudoers.d/p-package-manager
+sudo chmod 440 /etc/sudoers.d/p-package-manager
+
 echo ""
-echo "Done! Thank you for installing my pacman wrapper! And ignore the errors, that's normal!"
+echo "Done! Thank you for installing my pacman wrapper! And ignore the errors, thats normal!"
 echo ""
 echo "Quick reference:"
 echo "  p -i <pkg>   install"
