@@ -31,3 +31,5 @@ EOF
         *) echo "Unknown option: $1. Try 'p -h' for help.";;
     esac
 }
+
+fastfetch
