@@ -13,6 +13,11 @@ if ! command -v git &>/dev/null; then
     exit 1
 fi
 
+if ! command -v fastfetch &>/dev/null; then
+    echo "==> Installing fastfetch..."
+    sudo pacman -S fastfetch
+fi
+
 if ! command -v zsh &>/dev/null; then
     echo "Warning: zsh doesn't seem to be installed. Continuing anyway..."
 fi
