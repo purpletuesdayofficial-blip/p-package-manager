@@ -10,7 +10,6 @@
 - AUR support via `yay`
 - Zero dependencies beyond `pacman` and optionally `yay`
 - Lives entirely in your `.zshrc` — no binaries, no PATH pollution
-- But remember: it doesn't ask you to confirm anything to make your experience as quick and efficient as possible, so be careful!
 
 ---
 
