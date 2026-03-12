@@ -8,18 +8,15 @@ BACKUP="$HOME/.zshrc.bak"
 
 echo "==> p package manager installer"
 
-# Check for git
 if ! command -v git &>/dev/null; then
     echo "Error: git is not installed. Please install it first."
     exit 1
 fi
 
-# Check for zsh
 if ! command -v zsh &>/dev/null; then
     echo "Warning: zsh doesn't seem to be installed. Continuing anyway..."
 fi
 
-# Clone or update the repo
 if [ -d "$REPO_DIR/.git" ]; then
     echo "==> Found existing install at $REPO_DIR, pulling latest..."
     git -C "$REPO_DIR" pull
@@ -28,24 +25,21 @@ else
     git clone "$REPO_URL" "$REPO_DIR"
 fi
 
-# Back up existing .zshrc if it exists
 if [ -f "$ZSHRC" ]; then
     echo "==> Backing up existing .zshrc to $BACKUP"
     cp "$ZSHRC" "$BACKUP"
 fi
 
-# Check that the repo contains a .zshrc
 if [ ! -f "$REPO_DIR/.zshrc" ]; then
     echo "Error: No .zshrc found in the repository. Aborting."
     exit 1
 fi
 
-# Replace .zshrc
 echo "==> Installing new .zshrc..."
 cp "$REPO_DIR/.zshrc" "$ZSHRC"
 
 echo ""
-echo "Done! Thank you for installing my pacman wrapper!"
+echo "Done! Thank you for installing my pacman wrapper! And ignore the errors, that's normal!"
 echo ""
 echo "Quick reference:"
 echo "  p -i <pkg>   install"
