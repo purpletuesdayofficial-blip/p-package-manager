@@ -45,7 +45,7 @@ echo "==> Installing new .zshrc..."
 cp "$REPO_DIR/.zshrc" "$ZSHRC"
 
 echo ""
-echo "Done! Restart your terminal or run: source ~/.zshrc"
+echo "Done! Thank you for installing my pacman wrapper!"
 echo ""
 echo "Quick reference:"
 echo "  p -i <pkg>   install"
@@ -54,3 +54,4 @@ echo "  p -u         update system"
 echo "  p -s <pkg>   search"
 echo "  p -a <pkg>   install from AUR"
 echo "  p -h         help"
+source ~/.zshrc
