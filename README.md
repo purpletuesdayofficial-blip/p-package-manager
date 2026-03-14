@@ -64,14 +64,19 @@ source ~/.zshrc
 p [option] [package-name]
 ```
 
-| Flag | Description              | Equivalent command     |
-|------|--------------------------|------------------------|
-| `-i` | Install package(s)       | `sudo pacman -S`       |
-| `-r` | Remove package(s)        | `sudo pacman -R`       |
-| `-u` | Update system            | `sudo pacman -Syu`     |
-| `-s` | Search for package(s)    | `pacman -Ss`           |
-| `-a` | Install from AUR         | `yay -S`               |
-| `-h` | Show help                | —                      |
+| Flag | Description              | Equivalent command                                                                                                                            |
+|------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `-i` | Install package(s)       | `sudo pacman -S`, `sudo apt install`, `sudo zypper install`, `sudo dnf install`, or `brew install`                                            |
+| `-r` | Remove package(s)        | `sudo pacman -R`, `sudo apt purge`, `sudo zypper remove`, `sudo dnf remove`, or `brew remove`                                                 |
+| `-u` | Update system            | `sudo pacman -Syu`, `sudo apt update && sudo apt upgrade`, `sudo zypper update`,  `sudo dnf upgrade -y`, or `brew update && brew upgrade`     |
+| `-s` | Search for package(s)    | `pacman -Ss`, `apt search`, `dnf search`, `zypper search`, `brew search`                                                                      |                        
+| `-ai`| Install from AUR/cask on supported systems      | `yay -S`, `brew install --cask`                                                                                        |
+| `-ar`| Remove from AUR/cask on supported systems       | `yay -R`, `brew remove --cask`                                                                                         |
+| `-as`| Search the AUR/cask on supported systems        | `yay -Ss`, `brew search --cask`                                                                                        |  
+| `-fi`| Install from Flatpak     | `flatpak install`                                                                                                                             |
+| `-fr`| Remove from Flatpak      | `flatpak remove`                                                                                                                              |
+| `-fs`| Search on Flatpak        | `flatpak search`                                                                                                                              |  
+| `-h` | Show help                | —                                                                                                                                             |
 
 ---
 
