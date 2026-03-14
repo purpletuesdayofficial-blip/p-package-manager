@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>p — Package Manager for Arch Linux</title>
+  <title>p — Universal Package Manager Wrapper</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -16,6 +16,7 @@
       --muted: #6b6b80;
       --green: #86efac;
       --red: #f87171;
+      --orange: #fb923c;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -115,7 +116,7 @@
     .hero-sub {
       font-size: 1.15rem;
       color: var(--muted);
-      max-width: 540px;
+      max-width: 580px;
       margin-bottom: 2.5rem;
       opacity: 0;
       animation: fadeUp 0.6s 0.35s forwards;
@@ -179,6 +180,7 @@
     .badge.blue   { border-color: var(--accent);  color: var(--accent); }
     .badge.purple { border-color: var(--accent2); color: var(--accent2); }
     .badge.green  { border-color: var(--green);   color: var(--green); }
+    .badge.orange { border-color: var(--orange);  color: var(--orange); }
 
     section {
       position: relative;
@@ -205,6 +207,29 @@
       margin-bottom: 2.5rem;
     }
 
+    /* ── distro tab switcher ── */
+    .distro-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .distro-tab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .distro-tab:hover { border-color: var(--accent2); color: var(--accent2); }
+    .distro-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(126,184,247,0.07); }
+
     .docs-table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; }
 
     .docs-table th {
@@ -220,10 +245,26 @@
     .docs-table td { padding: 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
     .docs-table tr:last-child td { border-bottom: none; }
     .docs-table tr:hover td { background: var(--surface); }
+    .docs-table tr.section-row td { background: rgba(126,184,247,0.04); }
+    .docs-table tr.section-row td:first-child {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 1.25rem;
+    }
 
     .flag { color: var(--accent); font-size: 1rem; }
     .cmd  { color: var(--muted); font-size: 0.82rem; }
     .desc { color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.95rem; }
+
+    /* hide/show per distro */
+    .cmd-arch, .cmd-apt, .cmd-dnf, .cmd-zypper, .cmd-brew { display: none; }
+    [data-distro="arch"] .cmd-arch,
+    [data-distro="apt"]  .cmd-apt,
+    [data-distro="dnf"]  .cmd-dnf,
+    [data-distro="zypper"] .cmd-zypper,
+    [data-distro="brew"] .cmd-brew { display: block; }
 
     .examples-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
 
@@ -245,6 +286,14 @@
       align-items: center;
     }
 
+    .card-label {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
     .dot { width: 10px; height: 10px; border-radius: 50%; }
     .dot.r { background: var(--red); }
     .dot.y { background: #fbbf24; }
@@ -261,6 +310,8 @@
     .card-body .flag-c  { color: var(--accent); }
     .card-body .pkg     { color: var(--text); }
     .card-body .comment { color: var(--muted); }
+    .card-body .flag-f  { color: var(--orange); }
+    .card-body .flag-a  { color: var(--green); }
 
     .wiki-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
 
@@ -372,39 +423,150 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-tag">// arch linux · zsh · pacman wrapper</div>
+  <div class="hero-tag">// arch · debian · fedora · opensuse · macos · flatpak · zsh</div>
   <h1><span>p</span><br>package<br>manager.</h1>
-  <p class="hero-sub">A minimal zsh wrapper around <code style="font-family:'JetBrains Mono',monospace;color:var(--accent)">pacman</code> and <code style="font-family:'JetBrains Mono',monospace;color:var(--accent)">yay</code>. One letter. No bloat. No nonsense.</p>
+  <p class="hero-sub">A minimal zsh wrapper that speaks every package manager. One letter. No bloat. No nonsense — whatever distro you're on.</p>
   <div class="install-box">
     <span class="prompt">$</span>
     <span>bash &lt;(curl -s https://raw.githubusercontent.com/purpletuesdayofficial-blip/p-package-manager/main/install.sh)</span>
     <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
   </div>
   <div class="hero-badges">
-    <span class="badge blue">Arch Linux</span>
+    <span class="badge blue">Arch / Manjaro</span>
+    <span class="badge blue">Debian / Ubuntu</span>
+    <span class="badge blue">Fedora</span>
+    <span class="badge blue">openSUSE</span>
+    <span class="badge blue">macOS</span>
+    <span class="badge orange">Flatpak</span>
     <span class="badge purple">zsh</span>
     <span class="badge green">GPL v3</span>
-    <span class="badge">AUR support</span>
-    <span class="badge">~30 lines</span>
+    <span class="badge">AUR + Cask</span>
   </div>
 </div>
 
 <section id="docs">
   <div class="section-label">// 01 — documentation</div>
   <h2>Usage</h2>
-  <table class="docs-table">
-    <thead>
-      <tr><th>Flag</th><th>Description</th><th>Equivalent</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><span class="flag">-i</span></td><td><span class="desc">Install one or more packages</span></td><td><span class="cmd">sudo pacman -S --noconfirm</span></td></tr>
-      <tr><td><span class="flag">-r</span></td><td><span class="desc">Remove one or more packages</span></td><td><span class="cmd">sudo pacman -R</span></td></tr>
-      <tr><td><span class="flag">-u</span></td><td><span class="desc">Full system update</span></td><td><span class="cmd">sudo pacman -Syu</span></td></tr>
-      <tr><td><span class="flag">-s</span></td><td><span class="desc">Search for a package</span></td><td><span class="cmd">pacman -Ss</span></td></tr>
-      <tr><td><span class="flag">-a</span></td><td><span class="desc">Install from the AUR</span></td><td><span class="cmd">yay -S</span></td></tr>
-      <tr><td><span class="flag">-h</span></td><td><span class="desc">Show help</span></td><td><span class="cmd">—</span></td></tr>
-    </tbody>
-  </table>
+
+  <div class="distro-tabs">
+    <button class="distro-tab active" onclick="setDistro('arch', this)">Arch (pacman)</button>
+    <button class="distro-tab" onclick="setDistro('apt', this)">Debian / Ubuntu (apt)</button>
+    <button class="distro-tab" onclick="setDistro('dnf', this)">Fedora (dnf)</button>
+    <button class="distro-tab" onclick="setDistro('zypper', this)">openSUSE (zypper)</button>
+    <button class="distro-tab" onclick="setDistro('brew', this)">macOS (brew)</button>
+  </div>
+
+  <div id="docs-body" data-distro="arch">
+    <table class="docs-table">
+      <thead>
+        <tr><th>Flag</th><th>Description</th><th>Equivalent</th></tr>
+      </thead>
+      <tbody>
+        <tr class="section-row"><td colspan="3">// core</td></tr>
+        <tr>
+          <td><span class="flag">-i</span></td>
+          <td><span class="desc">Install one or more packages</span></td>
+          <td>
+            <span class="cmd cmd-arch">sudo pacman -S --noconfirm</span>
+            <span class="cmd cmd-apt">sudo apt install -y</span>
+            <span class="cmd cmd-dnf">sudo dnf install -y</span>
+            <span class="cmd cmd-zypper">sudo zypper install -y</span>
+            <span class="cmd cmd-brew">brew install</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-r</span></td>
+          <td><span class="desc">Remove one or more packages</span></td>
+          <td>
+            <span class="cmd cmd-arch">sudo pacman -R</span>
+            <span class="cmd cmd-apt">sudo apt remove -y</span>
+            <span class="cmd cmd-dnf">sudo dnf remove -y</span>
+            <span class="cmd cmd-zypper">sudo zypper remove -y</span>
+            <span class="cmd cmd-brew">brew uninstall</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-u</span></td>
+          <td><span class="desc">Full system update</span></td>
+          <td>
+            <span class="cmd cmd-arch">sudo pacman -Syu</span>
+            <span class="cmd cmd-apt">sudo apt update && sudo apt upgrade -y</span>
+            <span class="cmd cmd-dnf">sudo dnf upgrade -y</span>
+            <span class="cmd cmd-zypper">sudo zypper update -y</span>
+            <span class="cmd cmd-brew">brew update && brew upgrade</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-s</span></td>
+          <td><span class="desc">Search for a package</span></td>
+          <td>
+            <span class="cmd cmd-arch">pacman -Ss</span>
+            <span class="cmd cmd-apt">apt search</span>
+            <span class="cmd cmd-dnf">dnf search</span>
+            <span class="cmd cmd-zypper">zypper search</span>
+            <span class="cmd cmd-brew">brew search</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-h</span></td>
+          <td><span class="desc">Show help</span></td>
+          <td><span class="cmd cmd-arch">—</span><span class="cmd cmd-apt">—</span><span class="cmd cmd-dnf">—</span><span class="cmd cmd-zypper">—</span><span class="cmd cmd-brew">—</span></td>
+        </tr>
+
+        <tr class="section-row"><td colspan="3">// aur / cask</td></tr>
+        <tr>
+          <td><span class="flag">-ai</span></td>
+          <td><span class="desc">Install from AUR <span style="color:var(--muted);font-size:0.85em;">(Arch)</span> or Cask <span style="color:var(--muted);font-size:0.85em;">(macOS)</span></span></td>
+          <td>
+            <span class="cmd cmd-arch">yay -S</span>
+            <span class="cmd cmd-apt" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-dnf" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-zypper" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-brew">brew install --cask</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-ar</span></td>
+          <td><span class="desc">Remove AUR package <span style="color:var(--muted);font-size:0.85em;">(Arch)</span> or Cask app <span style="color:var(--muted);font-size:0.85em;">(macOS)</span></span></td>
+          <td>
+            <span class="cmd cmd-arch">yay -R</span>
+            <span class="cmd cmd-apt" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-dnf" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-zypper" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-brew">brew uninstall --cask</span>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="flag">-as</span></td>
+          <td><span class="desc">Search AUR <span style="color:var(--muted);font-size:0.85em;">(Arch)</span> or Cask <span style="color:var(--muted);font-size:0.85em;">(macOS)</span></span></td>
+          <td>
+            <span class="cmd cmd-arch">yay -Ss</span>
+            <span class="cmd cmd-apt" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-dnf" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-zypper" style="color:var(--muted);font-style:italic;">not applicable</span>
+            <span class="cmd cmd-brew">brew search --cask</span>
+          </td>
+        </tr>
+
+        <tr class="section-row"><td colspan="3">// flatpak (universal)</td></tr>
+        <tr>
+          <td><span class="flag">-fi</span></td>
+          <td><span class="desc">Install a Flatpak</span></td>
+          <td><span class="cmd cmd-arch">flatpak install</span><span class="cmd cmd-apt">flatpak install</span><span class="cmd cmd-dnf">flatpak install</span><span class="cmd cmd-zypper">flatpak install</span><span class="cmd cmd-brew">flatpak install</span></td>
+        </tr>
+        <tr>
+          <td><span class="flag">-fr</span></td>
+          <td><span class="desc">Remove a Flatpak</span></td>
+          <td><span class="cmd cmd-arch">flatpak uninstall</span><span class="cmd cmd-apt">flatpak uninstall</span><span class="cmd cmd-dnf">flatpak uninstall</span><span class="cmd cmd-zypper">flatpak uninstall</span><span class="cmd cmd-brew">flatpak uninstall</span></td>
+        </tr>
+        <tr>
+          <td><span class="flag">-fs</span></td>
+          <td><span class="desc">Search Flatpak</span></td>
+          <td><span class="cmd cmd-arch">flatpak search</span><span class="cmd cmd-apt">flatpak search</span><span class="cmd cmd-dnf">flatpak search</span><span class="cmd cmd-zypper">flatpak search</span><span class="cmd cmd-brew">flatpak search</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="examples">
@@ -413,7 +575,7 @@
   <div class="examples-grid">
 
     <div class="example-card">
-      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">arch / any</span></div>
       <div class="card-body">
         <span class="comment"># install packages</span><br>
         <span class="p">p</span> <span class="flag-c">-i</span> <span class="pkg">neovim</span><br>
@@ -422,7 +584,7 @@
     </div>
 
     <div class="example-card">
-      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">arch / any</span></div>
       <div class="card-body">
         <span class="comment"># remove a package</span><br>
         <span class="p">p</span> <span class="flag-c">-r</span> <span class="pkg">firefox</span><br><br>
@@ -432,12 +594,44 @@
     </div>
 
     <div class="example-card">
-      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">arch — AUR</span></div>
       <div class="card-body">
         <span class="comment"># search repos</span><br>
         <span class="p">p</span> <span class="flag-c">-s</span> <span class="pkg">htop</span><br><br>
         <span class="comment"># install from AUR</span><br>
-        <span class="p">p</span> <span class="flag-c">-a</span> <span class="pkg">vesktop</span>
+        <span class="p">p</span> <span class="flag-a">-ai</span> <span class="pkg">vesktop</span>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">flatpak — universal</span></div>
+      <div class="card-body">
+        <span class="comment"># install a flatpak</span><br>
+        <span class="p">p</span> <span class="flag-f">-fi</span> <span class="pkg">com.spotify.Client</span><br><br>
+        <span class="comment"># search &amp; remove</span><br>
+        <span class="p">p</span> <span class="flag-f">-fs</span> <span class="pkg">obs</span><br>
+        <span class="p">p</span> <span class="flag-f">-fr</span> <span class="pkg">com.obsproject.Studio</span>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">debian / ubuntu</span></div>
+      <div class="card-body">
+        <span class="comment"># same syntax, apt under the hood</span><br>
+        <span class="p">p</span> <span class="flag-c">-i</span> <span class="pkg">neovim</span><br>
+        <span class="p">p</span> <span class="flag-c">-u</span><br><br>
+        <span class="comment"># search</span><br>
+        <span class="p">p</span> <span class="flag-c">-s</span> <span class="pkg">ffmpeg</span>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="card-label">macos — cask</span></div>
+      <div class="card-body">
+        <span class="comment"># install cli tool</span><br>
+        <span class="p">p</span> <span class="flag-c">-i</span> <span class="pkg">ripgrep</span><br><br>
+        <span class="comment"># install GUI app via cask</span><br>
+        <span class="p">p</span> <span class="flag-a">-ai</span> <span class="pkg">firefox</span>
       </div>
     </div>
 
@@ -451,47 +645,68 @@
 
     <div class="wiki-card">
       <h3>Requirements</h3>
-      <p>Requires <code>zsh</code> as your shell and <code>pacman</code>, which comes standard on all Arch-based distros. The <code>-a</code> flag additionally requires <code>yay</code> for AUR support.</p>
-    </div>
-
-    <div class="wiki-card">
-      <h3>Installing yay</h3>
-      <p>If you don't have yay yet:<br><br>
-      <code>git clone https://aur.archlinux.org/yay.git</code><br>
-      <code>cd yay && makepkg -si</code><br><br>
-      After that, <code>p -a</code> will work as expected.</p>
-    </div>
-
-    <div class="wiki-card">
-      <h3>How it works</h3>
-      <p><code>p</code> is a plain zsh function injected into your <code>~/.zshrc</code>. No binaries, no PATH changes, no daemons. When you type <code>p -i neovim</code>, zsh matches the flag and runs the corresponding <code>pacman</code> command directly.</p>
-    </div>
-
-    <div class="wiki-card">
-      <h3>Passwordless sudo</h3>
-      <p>The installer drops a sudoers drop-in at <code>/etc/sudoers.d/p-package-manager</code>, granting passwordless <code>pacman</code> access for the current user only. It does not touch <code>/etc/sudoers</code> itself, keeping the change isolated and easy to undo.</p>
+      <p>Requires <code>zsh</code> as your shell. Everything else is auto-detected — <code>p</code> checks which package manager is present at runtime and routes commands accordingly. No config files needed.</p>
     </div>
 
     <div class="wiki-card">
       <h3>Supported distros</h3>
-      <p>Any distro using <code>pacman</code> as its package manager: Arch Linux, Manjaro, EndeavourOS, CachyOS, Garuda, Artix, and others. Will not work on Debian, Fedora, or any non-pacman system.</p>
+      <p>Arch Linux, Manjaro, EndeavourOS, and other <code>pacman</code>-based distros. Debian, Ubuntu, and derivatives via <code>apt</code>. Fedora and RHEL derivatives via <code>dnf</code>. openSUSE via <code>zypper</code>. macOS via Homebrew (<code>brew</code>). Flatpak works universally on all of the above.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>How detection works</h3>
+      <p><code>p</code> uses <code>command -v</code> to check which package manager binary is on your PATH. It checks in order: <code>pacman</code> → <code>apt</code> → <code>dnf</code> → <code>zypper</code> → <code>brew</code>. First match wins. Flatpak is checked separately and independently of the native manager.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>AUR support (Arch)</h3>
+      <p>The <code>-ai</code>, <code>-ar</code>, and <code>-as</code> flags require <code>yay</code> on Arch-based systems. Install it with:<br><br>
+      <code>git clone https://aur.archlinux.org/yay.git</code><br>
+      <code>cd yay && makepkg -si</code></p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Cask support (macOS)</h3>
+      <p>On macOS, <code>-ai</code> installs GUI apps via <code>brew install --cask</code> — stuff like Firefox, VS Code, Spotify. Regular <code>-i</code> still installs CLI tools the normal way. Requires Homebrew to be installed.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Flatpak</h3>
+      <p>Flatpak flags (<code>-fi</code>, <code>-fr</code>, <code>-fs</code>) work on any supported distro as long as <code>flatpak</code> is installed. They are completely independent of the native package manager. Use Flathub IDs like <code>com.spotify.Client</code>.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>How it works</h3>
+      <p><code>p</code> is a plain zsh function injected into your <code>~/.zshrc</code>. No binaries, no PATH changes, no daemons. When you type <code>p -i neovim</code>, zsh detects your package manager and fires the matching command directly.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Passwordless sudo</h3>
+      <p>On Linux, the installer drops a sudoers drop-in at <code>/etc/sudoers.d/p-package-manager</code>, granting passwordless access for the detected package manager only. It does not touch <code>/etc/sudoers</code> itself. macOS/Homebrew does not need sudo.</p>
     </div>
 
     <div class="wiki-card">
       <h3>Installing multiple packages</h3>
       <p>Pass multiple names separated by spaces:<br><br>
       <code>p -i git neovim htop fzf</code><br><br>
-      All arguments after the flag are forwarded directly to <code>pacman</code>, so standard multi-install syntax works as-is.</p>
+      All arguments after the flag are forwarded directly to the underlying package manager.</p>
     </div>
 
     <div class="wiki-card">
       <h3>What -u does</h3>
-      <p>Running <code>p -u</code> executes a full system upgrade via <code>pacman -Syu</code>. Any arguments after <code>-u</code> are ignored — it always upgrades the full system. This is intentional: partial upgrades are unsupported on Arch and can break things.</p>
+      <p>Running <code>p -u</code> executes a full system upgrade. On apt it runs <code>apt update && apt upgrade</code>. On pacman it runs <code>pacman -Syu</code>. Arguments after <code>-u</code> are ignored — it always upgrades everything.</p>
     </div>
 
     <div class="wiki-card">
       <h3>The .zshrc it installs</h3>
       <p>The installer replaces your <code>~/.zshrc</code> with the one from the repo. Your existing file is backed up to <code>~/.zshrc.bak</code> first. The installed config includes history settings, autocompletion, spell correction, and the <code>p()</code> function.</p>
+    </div>
+
+    <div class="wiki-card">
+      <h3>Unknown flags</h3>
+      <p>Passing an unrecognised flag prints:<br><br>
+      <code>Unknown option: X. Try 'p -h' for help.</code><br><br>
+      No command is executed and no packages are touched.</p>
     </div>
 
     <div class="wiki-card">
@@ -505,15 +720,8 @@
     </div>
 
     <div class="wiki-card">
-      <h3>Unknown flags</h3>
-      <p>Passing an unrecognised flag prints:<br><br>
-      <code>Unknown option: X. Try 'p -h' for help.</code><br><br>
-      No command is executed and no packages are touched.</p>
-    </div>
-
-    <div class="wiki-card">
       <h3>Security notes</h3>
-      <p>The installer requires sudo to write the sudoers drop-in. The <code>NOPASSWD</code> rule is scoped strictly to <code>/usr/bin/pacman</code> for your user only — not a blanket sudo bypass. Check <code>/etc/sudoers.d/p-package-manager</code> after install to verify.</p>
+      <p>The installer requires sudo to write the sudoers drop-in. The <code>NOPASSWD</code> rule is scoped strictly to the detected package manager binary for your user only — not a blanket sudo bypass. Check the drop-in after install to verify.</p>
     </div>
 
   </div>
@@ -560,7 +768,7 @@
 </section>
 
 <footer>
-  <span>© 2026 purpletuesdayofficial-blip — GPL v3</span>
+  <span>© 2025 purpletuesdayofficial-blip — GPL v3</span>
   <span>github.com/purpletuesdayofficial-blip/p-package-manager</span>
 </footer>
 
@@ -572,6 +780,12 @@
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
     });
+  }
+
+  function setDistro(distro, btn) {
+    document.getElementById('docs-body').dataset.distro = distro;
+    document.querySelectorAll('.distro-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
   }
 </script>
 
