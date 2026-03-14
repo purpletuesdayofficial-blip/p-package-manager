@@ -70,16 +70,18 @@ cp "$REPO_DIR/.zshrc" "$ZSHRC"
 echo "==> Modifying permissions..."
 if [ "$_PM" = "pacman" ]; then
     echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman" | sudo tee /etc/sudoers.d/p-package-manager
+    sudo chmod 440 /etc/sudoers.d/p-package-manager
 elif [ "$_PM" = "apt" ]; then
     echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/apt" | sudo tee /etc/sudoers.d/p-package-manager
+    sudo chmod 440 /etc/sudoers.d/p-package-manager
 elif [ "$_PM" = "dnf" ]; then
     echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/dnf" | sudo tee /etc/sudoers.d/p-package-manager
+    sudo chmod 440 /etc/sudoers.d/p-package-manager
 elif [ "$_PM" = "zypper" ]; then
     echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/zypper" | sudo tee /etc/sudoers.d/p-package-manager
+    sudo chmod 440 /etc/sudoers.d/p-package-manager
 elif [ "$_PM" = "brew" ]; then
     :
-else
-    sudo chmod 440 /etc/sudoers.d/p-package-manager
 fi
 
 echo ""
