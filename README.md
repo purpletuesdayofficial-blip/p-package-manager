@@ -4,6 +4,12 @@
 
 ---
 
+## What's new?
+
+- Added support for apt/Debian, dnf/RHEL, zypper/openSUSE, and homebrew/MacOS systems.
+
+---
+
 ## Features
 
 - Install, remove, update, and search packages with one-letter flags
