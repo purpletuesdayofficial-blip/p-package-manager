@@ -17,7 +17,7 @@ BACKUP="$HOME/.zshrc.bak"
         _PM="brew"
     else
         echo "p: no supported package manager found."
-        return 1
+        exit 1
     fi
 
 echo "==> p package manager installer"
@@ -29,20 +29,20 @@ fi
 
 if ! command -v fastfetch &>/dev/null; then
     echo "==> Installing requirements..."
-    if ["$_PM" = "pacman"]; then
+    if [ "$_PM" = "pacman" ]; then
         sudo pacman -S fastfetch zsh flatpak 
     fi
-    if ["$_PM" = "apt"]; then
-        sudo apt install fastfetch zsh
+    if [ "$_PM" = "apt" ]; then
+        sudo apt install fastfetch zsh flatpak
     fi
-    if ["$_PM" = "dnf"]; then
-        sudo dnf install fastfetch zsh
+    if [ "$_PM" = "dnf" ]; then
+        sudo dnf install fastfetch zsh flatpak
     fi
-    if ["$_PM" = "zypper"]; then
-        sudo zypper install fastfetch zsh
+    if [ "$_PM" = "zypper" ]; then
+        sudo zypper install fastfetch zsh flatpak
     fi
-    if ["$_PM" = "brew"]; then
-        brew install fastfetch zsh
+    if [ "$_PM" = "brew" ]; then
+        brew install fastfetch zsh flatpak
     fi
     
 fi
@@ -68,8 +68,19 @@ echo "==> Installing new .zshrc..."
 cp "$REPO_DIR/.zshrc" "$ZSHRC"
 
 echo "==> Modifying permissions..."
-echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman" | sudo tee /etc/sudoers.d/p-package-manager
-sudo chmod 440 /etc/sudoers.d/p-package-manager
+if [ "$_PM" = "pacman" ]; then
+    echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman" | sudo tee /etc/sudoers.d/p-package-manager
+elif [ "$_PM" = "apt" ]; then
+    echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/apt" | sudo tee /etc/sudoers.d/p-package-manager
+elif [ "$_PM" = "dnf" ]; then
+    echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/dnf" | sudo tee /etc/sudoers.d/p-package-manager
+elif [ "$_PM" = "zypper" ]; then
+    echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/zypper" | sudo tee /etc/sudoers.d/p-package-manager
+elif [ "$_PM" = "brew" ]; then
+    :
+else
+    sudo chmod 440 /etc/sudoers.d/p-package-manager
+fi
 
 echo ""
 echo "Done! Thank you for installing my wrapper! And ignore the errors, thats normal!"
@@ -86,4 +97,4 @@ echo "  p -fi <flatpak> install from Flatpak"
 echo "  p -fr <flatpak> remove from Flatpak"
 echo "  p -fs <flatpak> search Flatpak"
 echo "  p -h         help"
-source ~/.zshrc
+echo "==> Run 'source ~/.zshrc' or open a new terminal to finish."
