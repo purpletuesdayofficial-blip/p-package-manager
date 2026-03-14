@@ -5,6 +5,20 @@ REPO_URL="https://github.com/purpletuesdayofficial-blip/p-package-manager.git"
 REPO_DIR="$HOME/.p-package-manager"
 ZSHRC="$HOME/.zshrc"
 BACKUP="$HOME/.zshrc.bak"
+ if command -v pacman &>/dev/null; then
+        _PM="pacman"
+    elif command -v apt &>/dev/null; then
+        _PM="apt"
+    elif command -v dnf &>/dev/null; then
+        _PM="dnf"
+    elif command -v zypper &>/dev/null; then
+        _PM="zypper"
+    elif command -v brew &>/dev/null; then
+        _PM="brew"
+    else
+        echo "p: no supported package manager found."
+        return 1
+    fi
 
 echo "==> p package manager installer"
 
@@ -14,14 +28,24 @@ if ! command -v git &>/dev/null; then
 fi
 
 if ! command -v fastfetch &>/dev/null; then
-    echo "==> Installing fastfetch..."
-    sudo pacman -S fastfetch
+    echo "==> Installing requirements..."
+    if ["$_PM" = "pacman"]; then
+        sudo pacman -S fastfetch zsh flatpak 
+    fi
+    if ["$_PM" = "apt"]; then
+        sudo apt install fastfetch zsh
+    fi
+    if ["$_PM" = "dnf"]; then
+        sudo dnf install fastfetch zsh
+    fi
+    if ["$_PM" = "zypper"]; then
+        sudo zypper install fastfetch zsh
+    fi
+    if ["$_PM" = "brew"]; then
+        brew install fastfetch zsh
+    fi
+    
 fi
-
-if ! command -v zsh &>/dev/null; then
-    echo "Warning: zsh doesn't seem to be installed. Continuing anyway..."
-fi
-
 if [ -d "$REPO_DIR/.git" ]; then
     echo "==> Found existing install at $REPO_DIR, pulling latest..."
     git -C "$REPO_DIR" pull
@@ -48,13 +72,18 @@ echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman" | sudo tee /etc/sudoers.d/p-pac
 sudo chmod 440 /etc/sudoers.d/p-package-manager
 
 echo ""
-echo "Done! Thank you for installing my pacman wrapper! And ignore the errors, thats normal!"
+echo "Done! Thank you for installing my wrapper! And ignore the errors, thats normal!"
 echo ""
 echo "Quick reference:"
 echo "  p -i <pkg>   install"
 echo "  p -r <pkg>   remove"
 echo "  p -u         update system"
 echo "  p -s <pkg>   search"
-echo "  p -a <pkg>   install from AUR"
+echo "  p -ai <pkg>  install from AUR/cask if available"
+echo "  p -ar <pkg>  remove from AUR/cask if available"
+echo "  p -as <pkg>  search the AUR/cask if available"
+echo "  p -fi <flatpak> install from Flatpak"
+echo "  p -fr <flatpak> remove from Flatpak"
+echo "  p -fs <flatpak> search Flatpak"
 echo "  p -h         help"
 source ~/.zshrc
