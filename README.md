@@ -16,17 +16,16 @@
 - AUR support via `yay`
 - Zero dependencies beyond `pacman` and optionally `yay`
 - Lives entirely in your `.zshrc` — no binaries, no PATH pollution
-- Requires 0 confirmation, but do be careful!
-- It also removes ANY password authentication for pacman for ALL users, you have been warned, dont sue me please
+- It also removes ANY password authentication for your package manager for ALL users, you have been warned, dont sue me please
 
 ---
 
 ## Requirements
 
-- Arch Linux (or any Arch-based distro: Manjaro, EndeavourOS, CachyOS, etc.)
+- Arch, Debian, Fedora, openSUSE, or MacOS installed
 - `zsh` as your shell
-- `pacman` (comes with Arch)
-- `yay` — only required for `-a` (AUR installs)
+- whatever your package manager for your system is
+- `yay` — only required for `-a` (AUR installs) and cask
 
 ---
 
