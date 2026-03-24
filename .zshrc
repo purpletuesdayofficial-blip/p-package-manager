@@ -6,7 +6,47 @@ autoload -Uz compinit && compinit
 
 setopt CORRECT
 SPROMPT='zsh: correct %R to %r? [nyae] '
-
+ascii() {
+	echo -e "\e[34m███████████████████████                     ████████████████████████████████████
+████████████████████████              ██████████████████████████████████████████████
+████████████████████████           █████████████████████████████████████████████████████
+████████████████████████        ███████████████████████████████████████████████████████████
+████████████████████████      ███████████████████████████████████████████████████████████████
+█████████████████████████   ███████████████████████████████████████████████████████████████████
+█████████████████████████  █████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+██████████████████████████████████████████████████████████████████████████████████████████████████
+████████████████████████████████████████████                ███████████████████████████████████████
+█████████████████████████████████                                  █████████████████████████████████
+█████████████████████████████                                          █████████████████████████████
+███████████████████████████                                              ███████████████████████████
+██████████████████████████                                               ███████████████████████████
+█████████████████████████                                                 ██████████████████████████
+██████████████████████████                                               ███████████████████████████
+███████████████████████████                                             ████████████████████████████
+██████████████████████████████                                        ██████████████████████████████
+███████████████████████████████████                               ██████████████████████████████████
+███████████████████████████████████████████████████████████████████████████████████████████████████
+██████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████ ███████████████████████████████████████████████████████████████████████
+█████████████████████████  █████████████████████████████████████████████████████████████████████
+█████████████████████████   ██████████████████████████████████████████████████████████████████
+█████████████████████████      █████████████████████████████████████████████████████████████
+█████████████████████████        █████████████████████████████████████████████████████████
+█████████████████████████           ███████████████████████████████████████████████████
+█████████████████████████               ████████████████████████████████████████████
+█████████████████████████                    █████████████████████████████████
+█████████████████████████                                 ███████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████
+█████████████████████████\e[0m"
+}
 # ~/.zshrc
 p() {
     # detect native package manager
@@ -29,92 +69,92 @@ p() {
         -i)
             shift
             case "$_PM" in
-                pacman) sudo pacman -S --noconfirm "$@";;
-                apt)    sudo apt install -y "$@";;
-                dnf)    sudo dnf install -y "$@";;
-                zypper) sudo zypper install -y "$@";;
-                brew)   brew install "$@";;
+                pacman) ascii && sudo pacman -S --noconfirm "$@";;
+                apt)    ascii && sudo apt install -y "$@";;
+                dnf)    ascii && sudo dnf install -y "$@";;
+                zypper) ascii && sudo zypper install -y "$@";;
+                brew)   ascii && brew install "$@";;
             esac
             ;;
         -r)
             shift
             case "$_PM" in
-                pacman) sudo pacman -R --noconfirm "$@";;
-                apt)    sudo apt remove -y "$@";;
-                dnf)    sudo dnf remove -y "$@";;
-                zypper) sudo zypper remove -y "$@";;
-                brew)   brew uninstall "$@";;
+                pacman) ascii && sudo pacman -R --noconfirm "$@";;
+                apt)    ascii && sudo apt remove -y "$@";;
+                dnf)    ascii && sudo dnf remove -y "$@";;
+                zypper) ascii && sudo zypper remove -y "$@";;
+                brew)   ascii && brew uninstall "$@";;
             esac
             ;;
         -u)
             case "$_PM" in
-                pacman) sudo pacman -Syu --noconfirm;;
-                apt)    sudo apt update && sudo apt upgrade -y;;
-                dnf)    sudo dnf upgrade -y;;
-                zypper) sudo zypper update -y;;
-                brew)   brew update && brew upgrade;;
+                pacman) ascii && sudo pacman -Syu --noconfirm;;
+                apt)    ascii && sudo apt update && sudo apt upgrade -y;;
+                dnf)    ascii && sudo dnf upgrade -y;;
+                zypper) ascii && sudo zypper update -y;;
+                brew)   ascii && brew update && brew upgrade;;
             esac
             ;;
         -s)
             shift
             case "$_PM" in
-                pacman) pacman -Ss "$@";;
-                apt)    apt search "$@";;
-                dnf)    dnf search "$@";;
-                zypper) zypper search "$@";;
-                brew)   brew search "$@";;
+                pacman) ascii && pacman -Ss "$@";;
+                apt)    ascii && apt search "$@";;
+                dnf)    ascii && dnf search "$@";;
+                zypper) ascii && zypper search "$@";;
+                brew)   ascii && brew search "$@";;
             esac
             ;;
         -ai)
             shift
             case "$_PM" in
-                pacman) yay -S --noconfirm "$@";;
-                brew)   brew install --cask "$@";;
-                *)      echo "p: -ai is only available on Arch (yay) or macOS (brew cask).";;
+                pacman) ascii && yay -S --noconfirm "$@";;
+                brew)   ascii && brew install --cask "$@";;
+                *)      ascii && echo "p: -ai is only available on Arch (yay) or macOS (brew cask).";;
             esac
             ;;
         -ar)
             shift
             case "$_PM" in
-                pacman) yay -R --noconfirm "$@";;
-                brew)   brew uninstall --cask "$@";;
-                *)      echo "p: -ar is only available on Arch (yay) or macOS (brew cask).";;
+                pacman) ascii && yay -R --noconfirm "$@";;
+                brew)   ascii && brew uninstall --cask "$@";;
+                *)      ascii && echo "p: -ar is only available on Arch (yay) or macOS (brew cask).";;
             esac
             ;;
         -as)
             shift
             case "$_PM" in
-                pacman) yay -Ss "$@";;
-                brew)   brew search --cask "$@";;
-                *)      echo "p: -as is only available on Arch (yay) or macOS (brew cask).";;
+                pacman) ascii && yay -Ss "$@";;
+                brew)   ascii && brew search --cask "$@";;
+                *)      ascii && echo "p: -as is only available on Arch (yay) or macOS (brew cask).";;
             esac
             ;;
         -fi)
             shift
             if command -v flatpak &>/dev/null; then
-                flatpak install "$@"
+                ascii && flatpak install "$@"
             else
-                echo "p: flatpak is not installed."
+                ascii && echo "p: flatpak is not installed."
             fi
             ;;
         -fr)
             shift
             if command -v flatpak &>/dev/null; then
-                flatpak uninstall "$@"
+                ascii && flatpak uninstall "$@"
             else
-                echo "p: flatpak is not installed."
+                ascii && echo "p: flatpak is not installed."
             fi
             ;;
         -fs)
             shift
             if command -v flatpak &>/dev/null; then
-                flatpak search "$@"
+                ascii && flatpak search "$@"
             else
-                echo "p: flatpak is not installed."
+                ascii && echo "p: flatpak is not installed."
             fi
             ;;
         -h)
-            cat <<'EOF'
+            ascii && cat <<'EOF'
 Usage: p [option] [package-name]
 
 Options:
@@ -134,7 +174,7 @@ Options:
   -h     Show this help
 EOF
             ;;
-        *) echo "Unknown option: $1. Try 'p -h' for help.";;
+        *) ascii && echo "Unknown option: $1. Try 'p -h' for help.";;
     esac
 }
 
