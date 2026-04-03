@@ -16,16 +16,15 @@
 - AUR support via `yay`
 - Zero dependencies beyond the package manager and optionally `yay`
 - Lives entirely in your `.zshrc` — no binaries, no PATH pollution
-- It also removes ANY password authentication for your package manager for ALL users, you have been warned, dont sue me please
-
+- It also removes ANY password authentication for your package manager for ALL users, you have been warned, read the install.sh before installing.
 ---
 
 ## Requirements
 
-- Arch, Debian, Fedora, openSUSE, or MacOS installed
-- `zsh` as your shell
-- whatever your package manager for your system is
-- `yay` — only required for `-a` (AUR installs)
+- Arch, Debian, Fedora, openSUSE, or MacOS systems.
+- `zsh` as your shell.
+- `pacman`, `apt`, `dnf`, `zypper` or `brew`
+- `yay` — only required for `-ai/ar/as` (AUR related commands).
 
 ---
 
@@ -74,7 +73,7 @@ p [option] [package-name]
 | `-as`| Search the AUR/cask on supported systems        | `yay -Ss`, `brew search --cask`                                                                                        |  
 | `-fi`| Install from Flatpak     | `flatpak install`                                                                                                                             |
 | `-fr`| Remove from Flatpak      | `flatpak remove`                                                                                                                              |
-| `-fs`| Search on Flatpak        | `flatpak search`                                                                                                                              |  
+| `-fs`| Search Flatpak        | `flatpak search`                                                                                                                              |  
 | `-h` | Show help                | —                                                                                                                                             |
 
 ---
@@ -86,7 +85,7 @@ p -i neovim            # Install neovim
 p -r firefox           # Remove firefox
 p -u                   # Full system update
 p -s htop              # Search for htop
-p -a vesktop           # Install vesktop from AUR
+p -ai vesktop           # Install vesktop from AUR
 p -h                   # Show help
 ```
 
@@ -95,7 +94,7 @@ p -h                   # Show help
 ## Notes
 
 - `-u` ignores any additional arguments (it always runs a full system upgrade)
-- `-a` requires `yay` to be installed. Install it with:
+- `-a` requires `yay` to be installed on arch-based systems. Install it with:
   ```bash
   git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
   ```
