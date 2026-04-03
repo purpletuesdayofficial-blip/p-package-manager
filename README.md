@@ -1,6 +1,6 @@
 # p — Package Manager Wrapper for Arch Linux
 
-`p` is a minimal zsh function that wraps `pacman` and `yay` into a single, fast command. No more typing `sudo pacman -S` or forgetting flags — just `p`.
+`p` is a minimal zsh function that wraps `pacman`, `apt`, `dnf`, `zypper` and `brew` into a single, fast command. No more typing `sudo pacman -S` or forgetting flags — just `p`.
 
 ---
 
@@ -14,7 +14,7 @@
 
 - Install, remove, update, and search packages with one-letter flags
 - AUR support via `yay`
-- Zero dependencies beyond `pacman` and optionally `yay`
+- Zero dependencies beyond the package manager and optionally `yay`
 - Lives entirely in your `.zshrc` — no binaries, no PATH pollution
 - It also removes ANY password authentication for your package manager for ALL users, you have been warned, dont sue me please
 
@@ -25,7 +25,7 @@
 - Arch, Debian, Fedora, openSUSE, or MacOS installed
 - `zsh` as your shell
 - whatever your package manager for your system is
-- `yay` — only required for `-a` (AUR installs) and cask
+- `yay` — only required for `-a` (AUR installs)
 
 ---
 
