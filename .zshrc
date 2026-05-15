@@ -60,6 +60,14 @@ p() {
         _PM="zypper"
     elif command -v brew &>/dev/null; then
         _PM="brew"
+    elif command -v xbps-install &>/dev/null; then
+        _PM="xbps"
+    elif command -v apk &>/dev/null; then
+        _PM="apk"
+    elif command -v pkg &>/dev/null; then
+        _PM="pkg"
+    elif command -v pkg_add &>/dev/null; then
+        _PM="pkg_add"
     else
         echo "p: no supported package manager found."
         return 1
@@ -74,6 +82,10 @@ p() {
                 dnf)    ascii && sudo dnf install -y "$@";;
                 zypper) ascii && sudo zypper install -y "$@";;
                 brew)   ascii && brew install "$@";;
+                xbps)   ascii && sudo xbps-install -Sy "$@";;
+                apk)    ascii && sudo apk add "$@";;
+                pkg)    ascii && sudo pkg install -y "$@";;
+                pkg_add)ascii && sudo pkg_add -v "$@";;
             esac
             ;;
         -r)
@@ -84,6 +96,10 @@ p() {
                 dnf)    ascii && sudo dnf remove -y "$@";;
                 zypper) ascii && sudo zypper remove -y "$@";;
                 brew)   ascii && brew uninstall "$@";;
+                xbps)   ascii && sudo xbps-remove -Ry "$@";;
+                apk)    ascii && sudo apk del "$@";;
+                pkg)    ascii && sudo pkg delete -y "$@";;
+                pkg_add)ascii && sudo pkg_delete -v "$@";;
             esac
             ;;
         -u)
@@ -93,6 +109,10 @@ p() {
                 dnf)    ascii && sudo dnf upgrade -y;;
                 zypper) ascii && sudo zypper update -y;;
                 brew)   ascii && brew update && brew upgrade;;
+                xbps)   ascii && sudo xbps-install -Syu -y;;
+                apk)    ascii && sudo apk upgrade -a;;
+                pkg)    ascii && sudo pkg upgrade -y;;
+                pkg_add)ascii && sudo pkg upgrade -y;;
             esac
             ;;
         -s)
@@ -103,6 +123,10 @@ p() {
                 dnf)    ascii && dnf search "$@";;
                 zypper) ascii && zypper search "$@";;
                 brew)   ascii && brew search "$@";;
+                xbps)   ascii && sudo xbps-search "$@";;
+                apk)    ascii && sudo apk search "$@";;
+                pkg)    ascii && sudo pkg search "$@";;
+                pkg_add)ascii && sudo pkg_search "$@";;
             esac
             ;;
         -ai)

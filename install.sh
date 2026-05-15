@@ -30,19 +30,19 @@ fi
 if ! command -v fastfetch &>/dev/null; then
     echo "==> Installing requirements..."
     if [ "$_PM" = "pacman" ]; then
-        sudo pacman -S fastfetch zsh flatpak 
+        sudo pacman -S fastfetch zsh flatpak git
     fi
     if [ "$_PM" = "apt" ]; then
-        sudo apt install fastfetch zsh flatpak
+        sudo apt install fastfetch zsh flatpak git
     fi
     if [ "$_PM" = "dnf" ]; then
-        sudo dnf install fastfetch zsh flatpak
+        sudo dnf install fastfetch zsh flatpak git
     fi
     if [ "$_PM" = "zypper" ]; then
-        sudo zypper install fastfetch zsh flatpak
+        sudo zypper install fastfetch zsh flatpak git
     fi
     if [ "$_PM" = "brew" ]; then
-        brew install fastfetch zsh flatpak
+        brew install fastfetch zsh flatpak git
     fi
     
 fi
